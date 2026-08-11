@@ -51,9 +51,7 @@ function editUniqueUser(req, res) {
   const findUser = users.findIndex((user) => user.id === idUser);
 
   if (findUser === -1) {
-    return res
-      .status(404)
-      .json("Não foi possível excluir o usuário o mesmo não existe");
+    return res.status(404).json("Usuário não encontrado");
   }
 
   let idUserupdated = users[findUser].id;
