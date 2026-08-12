@@ -38,10 +38,10 @@ Além disso, serão implementados testes automatizados de API utilizando **Super
 
 ## 🚧 Em desenvolvimento
 
-- [ ] Integração com MySQL
-- [ ] Persistência dos usuários no banco de dados
-- [ ] Queries SQL parametrizadas
-- [ ] Tratamento de erros de banco de dados
+- [x] Integração com MySQL
+- [x] Persistência dos usuários no banco de dados
+- [x] Queries SQL parametrizadas
+- [x] Tratamento de erros de banco de dados
 - [ ] Testes automatizados com SuperTest
 - [ ] Testes positivos e negativos das rotas
 - [ ] Validação dos dados recebidos pela API
@@ -150,13 +150,13 @@ A ideia é evoluir o projeto gradualmente, começando por uma implementação si
 [x] CRUD em memória
 [x] Controllers
 [x] Middlewares
-[ ] MySQL
-[ ] CRUD com persistência
+[x] MySQL
+[x] CRUD com persistência
 [ ] SuperTest
 [ ] Testes automatizados
 [ ] Validações
-[ ] Tratamento de erros
-[ ] Arquitetura mais estruturada
+[x] Tratamento de erros
+[x] Arquitetura mais estruturada
 ```
 
 ---

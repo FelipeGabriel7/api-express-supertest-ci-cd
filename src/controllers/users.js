@@ -1,70 +1,70 @@
-let users = [];
+const UserModel = require("../models/UserModel");
 
-function createUser(req, res) {
+async function createUser(req, res) {
   const { name, age } = req.body;
 
-  const id = users.length > 0 ? users[users.length - 1].id + 1 : 1;
-  const newUser = {
-    id,
-    name,
-    age,
-  };
-  users.push(newUser);
-  return res.status(201).json(newUser);
-}
-
-function listAllUsers(req, res) {
-  return res.status(200).json(users);
-}
-
-function listUniqueUser(req, res) {
-  const idSearchUser = parseInt(req.params.id);
-
-  const userFind = users.find((user) => user.id === idSearchUser);
-  if (!userFind) {
-    return res.status(404).json("Usuário não existe");
+  try {
+    const user = await UserModel.create(name, age);
+    return res.status(201).json(user);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json("Erro 500 do servidor");
   }
-
-  return res.status(200).json(userFind);
 }
 
-function deleteUser(req, res) {
+async function listAllUsers(req, res) {
+  try {
+    const users = await UserModel.findAll();
+    return res.status(200).json(users);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json("Erro 500 do servidor");
+  }
+}
+
+async function listUniqueUser(req, res) {
+  const id = parseInt(req.params.id);
+
+  try {
+    const user = await UserModel.findById(id);
+    if (!user) return res.status(404).json("Usuário não existe");
+
+    return res.status(200).json(user);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json("Erro 500 no servidor");
+  }
+}
+
+async function deleteUser(req, res) {
   const idUser = parseInt(req.params.id);
 
-  const findUser = users.findIndex((user) => user.id === idUser);
-  if (findUser === -1) {
-    return res
-      .status(404)
-      .json("Não foi possível excluir o usuário o mesmo não existe");
-  }
+  try {
+    const userDelete = await UserModel.delete(idUser);
 
-  const removedUser = users.splice(findUser, 1);
-  return removedUser
-    ? res.status(200).json("Usuario removido com sucesso")
-    : res.status(404).json("Ocorreu um erro ao remover o usuário");
+    if (!userDelete) return res.status(404).json("Usuário não encontrado");
+
+    return res.status(204).send();
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json("Erro 500 do servidor");
+  }
 }
 
-function editUniqueUser(req, res) {
+async function editUniqueUser(req, res) {
   const idUser = parseInt(req.params.id);
   const { name, age } = req.body;
 
-  const findUser = users.findIndex((user) => user.id === idUser);
+  try {
+    const updateduser = await UserModel.update(idUser, name, age);
 
-  if (findUser === -1) {
-    return res.status(404).json("Usuário não encontrado");
+    if (!updateduser) return res.status(404).json("Usuario não encontrado");
+
+    return res.status(200).json(updateduser);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json("Erro 500 do servidor");
   }
-
-  let idUserupdated = users[findUser].id;
-
-  const updateUser = {
-    id: idUserupdated,
-    name,
-    age,
-  };
-
-  users[findUser] = updateUser;
-
-  return res.status(200).json(updateUser);
 }
 
 module.exports = {

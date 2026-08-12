@@ -1,12 +1,22 @@
 const express = require("express");
 const routes = require("./routes");
+const { initializeDatabase } = require("./database/database");
 
 const app = express();
-
-// Tipo de comunicação -> express.json, padrão de retorno json
 app.use(express.json());
 app.use(routes);
 
-// porta que o servidor vai rodar
-console.log("Servidor Iniciado...");
-app.listen(3001);
+async function startServer() {
+  try {
+    await initializeDatabase();
+
+    app.listen(3001, () => {
+      console.log("Servidor iniciado na porta 3001");
+    });
+  } catch (e) {
+    console.error("Não foi possível iniciar a aplicação", e);
+    process.exit(1);
+  }
+}
+
+startServer();
