@@ -1,0 +1,269 @@
+{
+  "info": {
+    "_postman_id": "d81dd8db-245a-45fb-95d6-0501594a4be8",
+    "name": "LocalAPI",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health API",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"retorna o estado da API\", () => {",
+              "  pm.response.to.have.status(200);",
+              "  pm.expect(pm.response.json()).to.eql(\"OK! Status check\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{BASE_LOCAL_URL}}/health"
+      }
+    },
+    {
+      "name": "Create User",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.unset(\"id_user\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const responseJson = pm.response.json();",
+              "",
+              "pm.test(\"cria um usuário\", () => {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(\"retorna o contrato do usuário criado\", () => {",
+              "  pm.expect(responseJson).to.have.property(\"id\");",
+              "  pm.expect(responseJson).to.have.property(\"name\");",
+              "  pm.expect(responseJson).to.have.property(\"age\");",
+              "  pm.expect(responseJson.id).to.be.a(\"number\");",
+              "  pm.expect(responseJson.name).to.be.a(\"string\");",
+              "  pm.expect(responseJson.age).to.be.a(\"number\");",
+              "});",
+              "",
+              "pm.collectionVariables.set(\"id_user\", responseJson.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "teste",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"{{$randomUserName}}\",\n  \"age\": 23\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{BASE_LOCAL_URL}}/user/create"
+      }
+    },
+    {
+      "name": "Search User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const responseJson = pm.response.json();",
+              "const expectedId = Number(pm.collectionVariables.get(\"id_user\"));",
+              "",
+              "pm.test(\"busca o usuário criado\", () => {",
+              "  pm.response.to.have.status(200);",
+              "  pm.expect(responseJson.id).to.eql(expectedId);",
+              "});",
+              "",
+              "pm.test(\"retorna o contrato persistido\", () => {",
+              "  pm.expect(responseJson).to.have.property(\"id\");",
+              "  pm.expect(responseJson).to.have.property(\"name\");",
+              "  pm.expect(responseJson).to.have.property(\"age\");",
+              "  pm.expect(responseJson).to.have.property(\"created_at\");",
+              "  pm.expect(responseJson).to.have.property(\"updated_at\");",
+              "  pm.expect(responseJson.id).to.be.a(\"number\");",
+              "  pm.expect(responseJson.name).to.be.a(\"string\");",
+              "  pm.expect(responseJson.age).to.be.a(\"number\");",
+              "  pm.expect(responseJson.created_at).to.be.a(\"string\");",
+              "  pm.expect(responseJson.updated_at).to.be.a(\"string\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{BASE_LOCAL_URL}}/user/{{id_user}}"
+      }
+    },
+    {
+      "name": "Update User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const responseJson = pm.response.json();",
+              "const expectedId = Number(pm.collectionVariables.get(\"id_user\"));",
+              "",
+              "pm.test(\"atualiza o usuário criado\", () => {",
+              "  pm.response.to.have.status(200);",
+              "  pm.expect(responseJson.id).to.eql(expectedId);",
+              "});",
+              "",
+              "pm.test(\"retorna o contrato atualizado\", () => {",
+              "  pm.expect(responseJson).to.have.property(\"id\");",
+              "  pm.expect(responseJson).to.have.property(\"name\");",
+              "  pm.expect(responseJson).to.have.property(\"age\");",
+              "  pm.expect(responseJson).to.have.property(\"created_at\");",
+              "  pm.expect(responseJson).to.have.property(\"updated_at\");",
+              "  pm.expect(responseJson.name).to.be.a(\"string\");",
+              "  pm.expect(responseJson.age).to.be.a(\"number\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "teste",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"{{$randomUserName}}\",\n  \"age\": 24\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{BASE_LOCAL_URL}}/user/edit/{{id_user}}"
+      }
+    },
+    {
+      "name": "List All Users",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const responseJson = pm.response.json();",
+              "const expectedId = Number(pm.collectionVariables.get(\"id_user\"));",
+              "",
+              "pm.test(\"lista os usuários\", () => {",
+              "  pm.response.to.have.status(200);",
+              "  pm.expect(responseJson).to.be.an(\"array\");",
+              "  pm.expect(responseJson.length).to.be.at.least(1);",
+              "});",
+              "",
+              "pm.test(\"inclui o usuário desta iteração\", () => {",
+              "  pm.expect(responseJson.some((user) => user.id === expectedId)).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{BASE_LOCAL_URL}}/users/list"
+      }
+    },
+    {
+      "name": "Delete User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"exclui o usuário da iteração\", () => {",
+              "  pm.response.to.have.status(204);",
+              "  pm.expect(pm.response.text()).to.eql(\"\");",
+              "});",
+              "",
+              "pm.collectionVariables.unset(\"id_user\");"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "teste",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": "{{BASE_LOCAL_URL}}/user/{{id_user}}"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_LOCAL_URL",
+      "value": "http://127.0.0.1:3001"
+    },
+    {
+      "key": "id_user",
+      "value": ""
+    }
+  ]
+}

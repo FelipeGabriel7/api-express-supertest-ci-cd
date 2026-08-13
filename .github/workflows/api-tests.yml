@@ -1,0 +1,82 @@
+name: API tests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root_test_password
+          MYSQL_DATABASE: usuarios_crud
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot_test_password"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Jest and Supertest
+        run: npm test
+
+      - name: Prepare test database user
+        run: |
+          docker exec "${{ job.services.mysql.id }}" mysql \
+            -uroot -proot_test_password \
+            -e "CREATE USER 'api_test'@'%' IDENTIFIED WITH mysql_native_password BY 'api_test_password'; GRANT ALL PRIVILEGES ON usuarios_crud.* TO 'api_test'@'%'; FLUSH PRIVILEGES;"
+
+      - name: Start API
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: api_test
+          DB_PASSWORD: api_test_password
+          DB_NAME: usuarios_crud
+        run: |
+          node src/index.js > api.log 2>&1 &
+          echo $! > api.pid
+
+      - name: Wait for API
+        run: |
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3001/health > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat api.log
+          exit 1
+
+      - name: Run Postman collection
+        run: npm run test:postman
+
+      - name: Stop API and show logs
+        if: always()
+        run: |
+          if [ -f api.pid ]; then
+            kill "$(cat api.pid)" 2>/dev/null || true
+          fi
+          if [ -f api.log ]; then
+            cat api.log
+          fi

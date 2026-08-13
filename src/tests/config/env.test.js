@@ -1,6 +1,3 @@
-const test = require("node:test");
-const assert = require("node:assert/strict");
-
 const { createConfig } = require("../../config/env");
 
 const validEnvironment = {
@@ -25,14 +22,14 @@ for (const variableName of requiredVariables) {
 
     delete environment[variableName];
 
-    assert.throws(() => createConfig(environment), new RegExp(variableName));
+    expect(() => createConfig(environment)).toThrow(new RegExp(variableName));
   });
 }
 
 test("retorna a configuração formatada para o MySQL", () => {
   const config = createConfig(validEnvironment);
 
-  assert.deepEqual(config, {
+  expect(config).toEqual({
     host: "localhost",
     port: 3306,
     user: "root",

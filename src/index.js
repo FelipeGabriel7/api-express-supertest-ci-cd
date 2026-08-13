@@ -1,10 +1,5 @@
-const express = require("express");
-const routes = require("./routes");
 const { initializeDatabase } = require("./database/database");
-
-const app = express();
-app.use(express.json());
-app.use(routes);
+const app = require("./app");
 
 async function startServer() {
   try {

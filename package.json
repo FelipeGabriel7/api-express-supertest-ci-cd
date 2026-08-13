@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --runInBand",
+    "test:postman": "newman run postman/api_collection.json --env-var BASE_LOCAL_URL=http://127.0.0.1:3001 --timeout-request 10000"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +20,9 @@
     "mysql": "^2.18.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "jest": "^30.4.2",
+    "newman": "^6.2.2",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
   }
 }
