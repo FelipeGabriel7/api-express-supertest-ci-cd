@@ -18,7 +18,7 @@ Os testes manuais no Postman continuarão exercitando a aplicação iniciada com
 
 - Validar queries ou integração real com MySQL.
 - Criar ou configurar o workflow do GitHub Actions nesta etapa.
-- Adicionar regras de validação para nome, idade ou identificadores.
+- Adicionar regras de validação para nome, idade ou identificadores neste primeiro ciclo de aprendizagem.
 - Automatizar a coleção do Postman.
 
 ## Arquitetura
@@ -85,6 +85,16 @@ Ordem dos exercícios:
 6. Testar os contratos positivos do CRUD.
 7. Adicionar recursos inexistentes e falhas do model.
 8. Executar a suíte completa e o relatório de cobertura.
+
+## Próximos ciclos do roadmap
+
+Após concluir o aprendizado inicial de Supertest, o projeto continuará nesta ordem:
+
+1. Definir o contrato de validação dos dados recebidos pela API.
+2. Implementar as validações guiadas por testes positivos e negativos.
+3. Configurar o GitHub Actions para executar a suíte a cada alteração.
+
+Essa separação preserva os três itens do roadmap do projeto — testes automatizados com Supertest, cenários positivos e negativos e validação de dados — sem misturar o aprendizado inicial da ferramenta com uma mudança de comportamento da API.
 
 ## Critérios de conclusão
 
