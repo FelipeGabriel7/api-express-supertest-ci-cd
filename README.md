@@ -155,6 +155,8 @@ A ideia é evoluir o projeto gradualmente, começando por uma implementação si
 [ ] SuperTest
 [ ] Testes automatizados
 [ ] Validações
+[ ] SuperTest
+[ ] CI/CD com Github Actions
 [x] Tratamento de erros
 [x] Arquitetura mais estruturada
 ```
